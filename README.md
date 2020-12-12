@@ -1,4 +1,5 @@
 # ChatApplication
+<h2>Team Members:</h2>
 <table>
     <tr>
         <th>Name</th>
