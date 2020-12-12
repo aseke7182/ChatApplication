@@ -13,12 +13,12 @@
     <tr>
         <td>Yerbolov Dauren</td>
         <td></td>
-        <td><a href="https://github.com/dorenyerbolov"></a></td>
+        <td><a href="https://github.com/dorenyerbolov">darenyerbolov</a></td>
     </tr>					
     <tr>
         <td>Mussayev Askar</td>
         <td>aseke7182@gmail.com</td>
-        <td><a href="https://github.com/aseke7182/webdev2019">Aseke7182</a></td>
+        <td><a href="https://github.com/aseke7182/webdev2019">aseke7182</a></td>
     </tr>
 </table>
 <h2>About Project</h2>
