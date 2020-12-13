@@ -1,19 +1,21 @@
+import ChatGroupActor.GetUser
 import UserActor.Command
+import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
-import scala.concurrent.duration.DurationInt
+
 import scala.concurrent.ExecutionContext
-import akka.actor.typed.scaladsl.AskPattern.Askable
+import scala.concurrent.duration.DurationInt
 
 trait Router {
   def route: Route
 }
 
-class MyRouter(user: ActorRef[Command])(implicit system: ActorSystem[_], ex: ExecutionContext)
+class MyRouter(user: ActorRef[Command],chat: ActorRef[ChatGroupActor.Command])(implicit system: ActorSystem[_], ex: ExecutionContext)
   extends Router
     with Directives {
 
@@ -34,6 +36,14 @@ class MyRouter(user: ActorRef[Command])(implicit system: ActorSystem[_], ex: Exe
         pathEndOrSingleSlash {
           get {
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "you are in chat app"))
+          }
+        },
+        path("sendMessage") {
+          post {
+            entity(as[MessageClass]) { msg =>
+              val result = chat.ask[String](ref => GetUser(msg, ref))
+              complete(result)
+            }
           }
         },
         path("getChatLog") {

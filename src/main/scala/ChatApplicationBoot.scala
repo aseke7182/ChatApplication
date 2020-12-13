@@ -1,4 +1,4 @@
-import UserActor.{GetChatLog, PostMessage}
+import UserActor.PostMessage
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import org.slf4j.{Logger, LoggerFactory}
@@ -20,15 +20,14 @@ object ChatApplicationBoot {
       val user2 = context.spawn(UserActor("user2", chat), "user2")
       val user3 = context.spawn(UserActor("user3", chat), "user3")
 
+      val host = "localhost"
+      val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(9000)
+
       user1 ! PostMessage("Hello")
       user2 ! PostMessage("Hello mate")
       user3 ! PostMessage("Hello mateeeee")
 
-
-      val host = "localhost"
-      val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(9000)
-
-      HttpServer.startHttpServer(new MyRouter(user3).route, host, port)(context.system, context.executionContext)
+      HttpServer.startHttpServer(new MyRouter(user3, chat).route, host, port)(context.system, context.executionContext)
       Behaviors.empty
     }
 
