@@ -13,7 +13,7 @@
  	</tr>
     <tr>
         <td>Yerbolov Dauren</td>
-        <td></td>
+        <td>doren.yerbolov@gmail.com</td>
         <td><a href="https://github.com/dorenyerbolov">darenyerbolov</a></td>
     </tr>					
     <tr>

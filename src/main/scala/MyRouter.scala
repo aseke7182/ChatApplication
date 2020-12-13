@@ -1,4 +1,5 @@
-import Chat.GetUser
+import ChatGroupActor.GetUser
+import UserActor.Command
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
@@ -11,13 +12,15 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
 
 trait Router {
-  def route(chat: ActorRef[Chat.Command]): Route
+  def route: Route
 }
 
-class MyRouter(implicit system: ActorSystem[_], ex: ExecutionContext)
+class MyRouter(user: ActorRef[Command],chat: ActorRef[ChatGroupActor.Command])(implicit system: ActorSystem[_], ex: ExecutionContext)
   extends Router
     with Directives {
 
+  implicit lazy val timeout: Timeout = Timeout(5.seconds)
+  implicit lazy val scheduler: Scheduler = system.scheduler
 
   def healthCheckRoute: Route = {
     path("ping") {
@@ -27,9 +30,7 @@ class MyRouter(implicit system: ActorSystem[_], ex: ExecutionContext)
     }
   }
 
-  def chatApplicationRoute(chat: ActorRef[Chat.Command]): Route = {
-    implicit val timeout: Timeout = 3.seconds
-    implicit lazy val scheduler: Scheduler = system.scheduler
+  def chatApplicationRoute: Route = {
     pathPrefix("chat-application") {
       concat(
         pathEndOrSingleSlash {
@@ -40,8 +41,16 @@ class MyRouter(implicit system: ActorSystem[_], ex: ExecutionContext)
         path("sendMessage") {
           post {
             entity(as[MessageClass]) { msg =>
-              val result = chat.ask[String](ref=> GetUser(msg,ref))
+              val result = chat.ask[String](ref => GetUser(msg, ref))
               complete(result)
+            }
+          }
+        },
+        path("getChatLog") {
+          pathEndOrSingleSlash {
+            get {
+              val processFuture = user.ask[List[String]](ref => UserActor.GetChatLog(ref))
+              complete(processFuture)
             }
           }
         }
@@ -49,10 +58,10 @@ class MyRouter(implicit system: ActorSystem[_], ex: ExecutionContext)
     }
   }
 
-  override def route(chat: ActorRef[Chat.Command]): Route = {
+  override def route: Route = {
     concat(
       healthCheckRoute,
-      chatApplicationRoute(chat)
+      chatApplicationRoute
     )
   }
 
