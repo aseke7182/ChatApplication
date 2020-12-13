@@ -13,6 +13,8 @@ object Chat {
 
   case object ShowSubscribers extends Command
 
+  case class GetUser(msg: MessageClass, replyTo: ActorRef[String]) extends Command
+
   def apply(chatName: String, subscribers: Seq[ActorRef[User.Command]] = Seq.empty): Behavior[Command] =
     Behaviors.setup[Command] { _ =>
       Behaviors.receiveMessage {
@@ -27,6 +29,15 @@ object Chat {
           apply(chatName, newSubscribers)
         case ShowSubscribers =>
           println(subscribers.mkString(" "))
+          Behaviors.same
+        case GetUser(msg,replyTo) =>
+          val subscribs = subscribers.filter(x => x.path.name == msg.userName)
+          if(subscribs.nonEmpty){
+            subscribs.head ! User.PostMessage(msg.msg)
+            replyTo ! "message send"
+          }else{
+            replyTo ! "user not Found"
+          }
           Behaviors.same
       }
     }
