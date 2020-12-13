@@ -1,6 +1,6 @@
-import UserActor.PostMessage
+import UserActor.{PostMessage, Subscribe, Unsubscribe}
 import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.ExecutionContext
@@ -23,11 +23,14 @@ object ChatApplicationBoot {
       val host = "localhost"
       val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(9000)
 
+      user1 ! Subscribe
+      user2 ! Subscribe
+      user3 ! Subscribe
       user1 ! PostMessage("Hello")
       user2 ! PostMessage("Hello mate")
       user3 ! PostMessage("Hello mateeeee")
 
-      HttpServer.startHttpServer(new MyRouter(user3, chat).route, host, port)(context.system, context.executionContext)
+      HttpServer.startHttpServer(new MyRouter(chat).route, host, port)(context.system, context.executionContext)
       Behaviors.empty
     }
 
