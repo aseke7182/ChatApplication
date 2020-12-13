@@ -1,18 +1,24 @@
-import akka.actor.typed.ActorSystem
+import UserActor.Command
+import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.{Directives, Route}
+import akka.util.Timeout
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
-
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext
+import akka.actor.typed.scaladsl.AskPattern.Askable
 
 trait Router {
   def route: Route
 }
 
-class MyRouter(implicit system: ActorSystem[_], ex: ExecutionContext)
+class MyRouter(user: ActorRef[Command])(implicit system: ActorSystem[_], ex: ExecutionContext)
   extends Router
     with Directives {
+
+  implicit lazy val timeout: Timeout = Timeout(5.seconds)
+  implicit lazy val scheduler: Scheduler = system.scheduler
 
   def healthCheckRoute: Route = {
     path("ping") {
@@ -24,11 +30,21 @@ class MyRouter(implicit system: ActorSystem[_], ex: ExecutionContext)
 
   def chatApplicationRoute: Route = {
     pathPrefix("chat-application") {
-      pathEndOrSingleSlash {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "you are in chat app"))
+      concat(
+        pathEndOrSingleSlash {
+          get {
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "you are in chat app"))
+          }
+        },
+        path("getChatLog") {
+          pathEndOrSingleSlash {
+            get {
+              val processFuture = user.ask[List[String]](ref => UserActor.GetChatLog(ref))
+              complete(processFuture)
+            }
+          }
         }
-      }
+      )
     }
   }
 
