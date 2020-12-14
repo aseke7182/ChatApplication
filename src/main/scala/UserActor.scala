@@ -1,5 +1,7 @@
+import ACLActor.RegisterUser
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import akka.io.Tcp.Register
 
 object UserActor {
 
@@ -15,7 +17,14 @@ object UserActor {
 
   case object Unsubscribe extends Command
 
-  def apply(userName: String, chatRef: ActorRef[ChatGroupActor.Command], chatLog: List[String] = List.empty): Behavior[Command] =
+  def apply(userName: String, chatRef: ActorRef[ChatGroupActor.Command], aclRef: ActorRef[ACLActor.Command], chatLog: List[String] = List.empty): Behavior[Command] =
+    Behaviors.setup[Command] { context =>
+      aclRef ! RegisterUser(context.self)
+
+      working(userName, chatRef, aclRef, chatLog)
+    }
+
+  private def working(userName: String, chatRef: ActorRef[ChatGroupActor.Command], aclRef: ActorRef[ACLActor.Command], chatLog: List[String] = List.empty): Behavior[Command] =
     Behaviors.setup[Command] { context =>
       Behaviors.receiveMessage {
         case PostMessage(msg) =>
@@ -23,7 +32,7 @@ object UserActor {
           Behaviors.same
         case GetMessage(from, time, msg) =>
           val messageLog: String = s"${time} | ${from}: ${msg}"
-          apply(userName, chatRef, messageLog +: chatLog)
+          working(userName, chatRef, aclRef: ActorRef[ACLActor.Command], messageLog +: chatLog)
         case GetChatLog(replyTo) =>
           replyTo ! chatLog
           Behaviors.same

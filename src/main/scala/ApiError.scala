@@ -13,4 +13,7 @@ object ApiError {
 
   def userNotFound(userName: String): ApiError =
     new ApiError(StatusCodes.NotFound, s"The user with username ${userName} could not be found.")
+
+  def userNotSubscribed(userName: String): ApiError =
+    new ApiError(StatusCodes.NotFound, s"The user with username ${userName} is not subscribed.")
 }

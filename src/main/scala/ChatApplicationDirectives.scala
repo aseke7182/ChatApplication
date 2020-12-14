@@ -1,4 +1,4 @@
-import ChatGroupActor.UserNotFound
+import ACLActor.{UserNotFound, UserNotSubscribed}
 import akka.http.scaladsl.server.{Directive1, Directives}
 
 import scala.concurrent.Future
@@ -32,6 +32,7 @@ trait ChatApplicationDirectives extends Directives {
 
   private def handleError[Y](e: Y): ApiError = e match {
     case UserNotFound(userName) => ApiError.userNotFound(userName)
+    case UserNotSubscribed(userName) => ApiError.userNotSubscribed(userName)
     case _ => ApiError.generic
   }
 }
