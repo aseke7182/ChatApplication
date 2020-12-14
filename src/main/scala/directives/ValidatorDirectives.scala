@@ -1,4 +1,7 @@
+package directives
+
 import akka.http.scaladsl.server.{Directive0, Directives}
+import validators.Validator
 
 trait ValidatorDirectives extends Directives {
   def validateWith[T](validator: Validator[T])(t: T): Directive0 =

@@ -1,12 +1,15 @@
-import ChatGroupActor.GetSubscribers
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.scaladsl.AskPattern.Askable
+package actors
+
+import actors.ChatGroupActor.GetSubscribers
+import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior, Scheduler}
 import akka.util.Timeout
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
+
+import scala.concurrent.duration._
+import akka.actor.typed.scaladsl.AskPattern.Askable
 
 object ACLActor {
 

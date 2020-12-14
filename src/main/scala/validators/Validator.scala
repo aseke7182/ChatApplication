@@ -1,3 +1,7 @@
+package validators
+
+import models.{ApiError, MessageClass}
+
 trait Validator[T] {
   def validate(t: T): Option[ApiError]
 }
