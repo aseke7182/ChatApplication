@@ -24,4 +24,5 @@ object ApiError {
 
   def userAlreadySubscribed(userName: String): ApiError =
     new ApiError(StatusCodes.Conflict, s"The user with username ${userName} already subscribed to the group chat.")
+
 }
