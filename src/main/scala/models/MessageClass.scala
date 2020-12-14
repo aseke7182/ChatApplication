@@ -1,3 +1,3 @@
 package models
 
-case class MessageClass(id: String, userName: String, msg: String)
+case class MessageClass(userName: String, msg: String)

@@ -18,4 +18,10 @@ object ApiError {
 
   def userNotSubscribed(userName: String): ApiError =
     new ApiError(StatusCodes.NotFound, s"The user with username ${userName} is not subscribed.")
+
+  def userAlreadyExists(userName: String): ApiError =
+    new ApiError(StatusCodes.Conflict, s"The user with username ${userName} already exists.")
+
+  def userAlreadySubscribed(userName: String): ApiError =
+    new ApiError(StatusCodes.Conflict, s"The user with username ${userName} already subscribed to the group chat.")
 }

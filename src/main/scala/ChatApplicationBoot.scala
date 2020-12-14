@@ -1,7 +1,8 @@
-import actors.UserActor.{PostMessage, Subscribe}
+import actors.ChatGroupActor.Subscribe
+import actors.UserActor.PostMessage
 import actors.{ACLActor, ChatGroupActor, UserActor}
 import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import akka.actor.typed.scaladsl.Behaviors
 import http.HttpServer
 import org.slf4j.{Logger, LoggerFactory}
 import router.MyRouter
@@ -25,12 +26,13 @@ object ChatApplicationBoot {
       val user2 = context.spawn(actors.UserActor("user2", chat, accessControl), "user2")
       val user3 = context.spawn(actors.UserActor("user3", chat, accessControl), "user3")
 
+
       val host = "localhost"
       val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(9000)
 
-      user1 ! Subscribe
-      user2 ! Subscribe
-      user3 ! Subscribe
+      chat ! Subscribe(user1)
+      chat ! Subscribe(user2)
+      chat ! Subscribe(user3)
       Thread.sleep(100)
       user1 ! PostMessage("Hello")
       user2 ! PostMessage("Hello mate")
