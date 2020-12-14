@@ -1,6 +1,6 @@
 package router
 
-import actors.ACLActor.{CreateUser, GetUser, SubscribeUser}
+import actors.ACLActor.{CreateUser, GetUser, SubscribeUser, UnsubscribeUser}
 import actors.ChatGroupActor.GetSubscribers
 import actors.{ACLActor, ChatGroupActor, UserActor}
 import akka.actor.typed.scaladsl.AskPattern.Askable
@@ -102,7 +102,19 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command], accessControl: ActorRef[A
               }
             }
           }
-        })
+        },
+        path("unsubscribeUser") {
+          post {
+            entity(as[User]) { user =>
+              validateWith(StringValidator)(user.userName) {
+                handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => UnsubscribeUser(user.userName, ref))) { userRef =>
+                  complete(s"user with ${userRef.path.name} was unsubscribed from the group chat")
+                }
+              }
+            }
+          }
+        }
+      )
     }
   }
 

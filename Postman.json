@@ -1,0 +1,366 @@
+{
+	"info": {
+		"_postman_id": "0898b843-9c09-4f9e-a7c0-9db456ee6db7",
+		"name": "Highload",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AddressBook",
+			"item": [
+				{
+					"name": "Create Address Book ",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Askar\",\n    \"surname\": \"Jogn\",\n    \"address\": \"Koksh 22\",\n    \"telephoneNumber\": 77787\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/addressBooks/addressBooks",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"addressBooks",
+								"addressBooks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Updaate Address Book",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"asd\",\n    \"surname\": \"Askar\",\n    \"address\": \"\",\n    \"telephoneNumber\": 777\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/addressBooks/1",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"addressBooks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all address Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/addressBooks",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"addressBooks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/addressBooks/search/askar",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"addressBooks",
+								"search",
+								"askar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PING",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/ping",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Second Address Book",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/addressBooks/2",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"addressBooks",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete First Address Book",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://address-book-kbtu.herokuapp.com/addressBooks/1",
+							"protocol": "http",
+							"host": [
+								"address-book-kbtu",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"addressBooks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Final",
+			"item": [
+				{
+					"name": "Send Message by user1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"1\",\n    \"userName\": \"user1\",\n    \"msg\": \"Hello, Dude!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9000/chat-application/sendMessage",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application",
+								"sendMessage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat Log",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userName\":\"user1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9000/chat-application/getChatLog",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application",
+								"getChatLog"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9000/chat-application",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Subscribers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9000/chat-application/getSubscribers",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application",
+								"getSubscribers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userName\":\"newUser\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9000/chat-application/createUser",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application",
+								"createUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subscribe newUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userName\": \"newUser\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9000/chat-application/subscribeUser",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application",
+								"subscribeUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unsubscribe user1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userName\": \"user1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9000/chat-application/unsubscribeUser",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"chat-application",
+								"unsubscribeUser"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

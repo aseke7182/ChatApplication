@@ -1,7 +1,7 @@
 package actors
 
 import actors.ChatGroupActor.GetSubscribers
-import actors.ChatGroupActor.Subscribe
+import actors.ChatGroupActor.{Subscribe,Unsubscribe}
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior, Scheduler}
@@ -22,6 +22,8 @@ object ACLActor {
   case class CreateUser(userName: String, replyTo: ActorRef[Either[ActorRef[UserActor.Command], Exception]]) extends Command
 
   case class SubscribeUser(userName: String, replyTo: ActorRef[Either[ActorRef[UserActor.Command], Exception]]) extends Command
+
+  case class UnsubscribeUser(userName: String, replyTo: ActorRef[Either[ActorRef[UserActor.Command], Exception]]) extends  Command
 
   final case class UserNotFound(userName: String) extends Exception(s"User with username: ${userName} not found.")
 
@@ -101,6 +103,31 @@ object ACLActor {
             replyTo ! Right(UserNotFound(userName))
           }
           Behaviors.same
+        case UnsubscribeUser(userName, replyTo) => {
+          val foundUser = findUser(registeredUsers, userName)
+          if (foundUser.nonEmpty) {
+            val processFuture = chat.ask[Seq[ActorRef[UserActor.Command]]](ref => GetSubscribers(ref))
+            processFuture.onComplete {
+              case Success(seqOfSubscribers) =>
+                val foundSubscriber = findUser(seqOfSubscribers, userName)
+
+                if (foundSubscriber.nonEmpty){
+                  chat ! Unsubscribe(foundSubscriber.head)
+                  replyTo ! Left(foundSubscriber.head)
+                }
+                else {
+                  replyTo ! Right(UserNotSubscribed(userName))
+                }
+              case Failure(_) =>
+                replyTo ! Right(new Exception("Internal error"))
+            }
+          }
+          else {
+            replyTo ! Right(UserNotFound(userName))
+          }
+          Behaviors.same
+
+        }
       }
     }
 
