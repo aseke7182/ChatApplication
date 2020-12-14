@@ -1,6 +1,6 @@
 package directives
 
-import actors.ACLActor.{UserNotFound, UserNotSubscribed}
+import actors.ACLActor.{UserAlreadyExists, UserAlreadySubscribed, UserNotFound, UserNotSubscribed}
 import akka.http.scaladsl.server.{Directive1, Directives}
 import models.ApiError
 
@@ -36,6 +36,8 @@ trait ChatApplicationDirectives extends Directives {
   private def handleError[Y](e: Y): ApiError = e match {
     case UserNotFound(userName) => ApiError.userNotFound(userName)
     case UserNotSubscribed(userName) => ApiError.userNotSubscribed(userName)
+    case UserAlreadyExists(userName) => ApiError.userAlreadyExists(userName)
+    case UserAlreadySubscribed(userName) => ApiError.userAlreadySubscribed(userName)
     case _ => ApiError.generic
   }
 }

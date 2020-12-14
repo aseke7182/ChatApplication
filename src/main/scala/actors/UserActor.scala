@@ -14,10 +14,6 @@ object UserActor {
 
   case class GetChatLog(replyTo: ActorRef[List[String]]) extends Command
 
-  case object Subscribe extends Command
-
-  case object Unsubscribe extends Command
-
   def apply(userName: String, chatRef: ActorRef[ChatGroupActor.Command], aclRef: ActorRef[ACLActor.Command], chatLog: List[String] = List.empty): Behavior[Command] =
     Behaviors.setup[Command] { context =>
       aclRef ! RegisterUser(context.self)
@@ -33,15 +29,9 @@ object UserActor {
           Behaviors.same
         case GetMessage(from, time, msg) =>
           val messageLog: String = s"${time} | ${from}: ${msg}"
-          working(userName, chatRef, aclRef: ActorRef[ACLActor.Command], messageLog +: chatLog)
+          working(userName, chatRef, aclRef: ActorRef[ACLActor.Command], chatLog :+ messageLog)
         case GetChatLog(replyTo) =>
           replyTo ! chatLog
-          Behaviors.same
-        case Subscribe =>
-          chatRef ! ChatGroupActor.Subscribe(context.self)
-          Behaviors.same
-        case Unsubscribe =>
-          chatRef ! ChatGroupActor.Unsubscribe(context.self)
           Behaviors.same
       }
     }

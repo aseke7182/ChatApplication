@@ -1,6 +1,6 @@
 package router
 
-import actors.ACLActor.{CreateUser, GetUser, RegisterUser}
+import actors.ACLActor.{CreateUser, GetUser, SubscribeUser}
 import actors.ChatGroupActor.GetSubscribers
 import actors.{ACLActor, ChatGroupActor, UserActor}
 import akka.actor.typed.scaladsl.AskPattern.Askable
@@ -11,7 +11,7 @@ import akka.util.Timeout
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import directives.{ChatApplicationDirectives, ValidatorDirectives}
 import io.circe.generic.auto._
-import models.MessageClass
+import models.{MessageClass, User}
 import validators.{MessageClassValidator, StringValidator}
 
 import scala.concurrent.ExecutionContext
@@ -61,9 +61,9 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command], accessControl: ActorRef[A
         path("getChatLog") {
           pathEndOrSingleSlash {
             get {
-              entity(as[String]) { userName =>
-                validateWith(StringValidator)(userName) {
-                  handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => GetUser(userName, ref))) { userRef =>
+              entity(as[User]) { user =>
+                validateWith(StringValidator)(user.userName) {
+                  handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => GetUser(user.userName, ref))) { userRef =>
                     val processFuture = userRef.ask[List[String]](ref => UserActor.GetChatLog(ref))
                     complete(processFuture)
                   }
@@ -72,7 +72,7 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command], accessControl: ActorRef[A
             }
           }
         },
-        path("getUsers") {
+        path("getSubscribers") {
           pathEndOrSingleSlash {
             get {
               handleWithGeneric(chat.ask[Seq[ActorRef[UserActor.Command]]](ref => GetSubscribers(ref))) { users =>
@@ -83,15 +83,26 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command], accessControl: ActorRef[A
         },
         path("createUser") {
           post {
-            entity(as[String]) { userName =>
-              validateWith(StringValidator)(userName) {
-                accessControl ! CreateUser(userName)
-                complete(s"user with $userName created")
+            entity(as[User]) { user =>
+              validateWith(StringValidator)(user.userName) {
+                handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => CreateUser(user.userName, ref))) { userRef =>
+                  complete(s"user with ${userRef.path.name} created")
+                }
               }
             }
           }
-        }
-      )
+        },
+        path("subscribeUser") {
+          post {
+            entity(as[User]) { user =>
+              validateWith(StringValidator)(user.userName) {
+                handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => SubscribeUser(user.userName, ref))) { userRef =>
+                  complete(s"user with ${userRef.path.name} subscribed to the group chat")
+                }
+              }
+            }
+          }
+        })
     }
   }
 
