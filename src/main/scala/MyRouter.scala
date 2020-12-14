@@ -1,6 +1,5 @@
-import ChatGroupActor.{GetUser, GetUsers, UserNotFound}
-import UserActor.Subscribe
-import akka.actor.typed.scaladsl.ActorContext
+import ACLActor.{GetUser, UserNotFound}
+import ChatGroupActor.GetSubscribers
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
@@ -16,7 +15,7 @@ trait Router {
   def route: Route
 }
 
-class MyRouter(chat: ActorRef[ChatGroupActor.Command])(implicit system: ActorSystem[_], ex: ExecutionContext)
+class MyRouter(chat: ActorRef[ChatGroupActor.Command], accessControl: ActorRef[ACLActor.Command])(implicit system: ActorSystem[_], ex: ExecutionContext)
   extends Router
     with Directives
     with ChatApplicationDirectives
@@ -45,7 +44,7 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command])(implicit system: ActorSys
           post {
             entity(as[MessageClass]) { message =>
               validateWith(MessageClassValidator)(message) {
-                handleWithEither(chat.ask[Either[ActorRef[UserActor.Command], UserNotFound]](ref => GetUser(message.userName, ref))) { userRef =>
+                handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => GetUser(message.userName, ref))) { userRef =>
                   userRef ! UserActor.PostMessage(message.msg)
                   complete("message sent")
                 }
@@ -58,7 +57,7 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command])(implicit system: ActorSys
             get {
               entity(as[String]) { userName =>
                 validateWith(StringValidator)(userName) {
-                  handleWithEither(chat.ask[Either[ActorRef[UserActor.Command], UserNotFound]](ref => GetUser(userName, ref))) { userRef =>
+                  handleWithEither(accessControl.ask[Either[ActorRef[UserActor.Command], Exception]](ref => GetUser(userName, ref))) { userRef =>
                     val processFuture = userRef.ask[List[String]](ref => UserActor.GetChatLog(ref))
                     complete(processFuture)
                   }
@@ -70,7 +69,7 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command])(implicit system: ActorSys
         path("getUsers") {
           pathEndOrSingleSlash {
             get {
-              handleWithGeneric(chat.ask[Seq[ActorRef[UserActor.Command]]](ref => GetUsers(ref))) { users =>
+              handleWithGeneric(chat.ask[Seq[ActorRef[UserActor.Command]]](ref => GetSubscribers(ref))) { users =>
                 complete(users.map(_.path.name).mkString(" "))
               }
             }
