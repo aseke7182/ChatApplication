@@ -1,6 +1,6 @@
 package router
 
-import actors.ACLActor.GetUser
+import actors.ACLActor.{CreateUser, GetUser, RegisterUser}
 import actors.ChatGroupActor.GetSubscribers
 import actors.{ACLActor, ChatGroupActor, UserActor}
 import akka.actor.typed.scaladsl.AskPattern.Askable
@@ -85,6 +85,7 @@ class MyRouter(chat: ActorRef[ChatGroupActor.Command], accessControl: ActorRef[A
           post {
             entity(as[String]) { userName =>
               validateWith(StringValidator)(userName) {
+                accessControl ! CreateUser(userName)
                 complete(s"user with $userName created")
               }
             }
