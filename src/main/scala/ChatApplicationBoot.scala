@@ -1,7 +1,10 @@
-import UserActor.{PostMessage, Subscribe, Unsubscribe}
+import actors.UserActor.{PostMessage, Subscribe}
+import actors.{ACLActor, ChatGroupActor, UserActor}
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import http.HttpServer
 import org.slf4j.{Logger, LoggerFactory}
+import router.MyRouter
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
@@ -19,8 +22,8 @@ object ChatApplicationBoot {
       val accessControl = context.spawn(ACLActor(chat), "ACLActor")
       Thread.sleep(100)
       val user1 = context.spawn(UserActor("user1", chat, accessControl), "user1")
-      val user2 = context.spawn(UserActor("user2", chat, accessControl), "user2")
-      val user3 = context.spawn(UserActor("user3", chat, accessControl), "user3")
+      val user2 = context.spawn(actors.UserActor("user2", chat, accessControl), "user2")
+      val user3 = context.spawn(actors.UserActor("user3", chat, accessControl), "user3")
 
       val host = "localhost"
       val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(9000)

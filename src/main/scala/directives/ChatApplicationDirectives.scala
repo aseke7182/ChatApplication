@@ -1,5 +1,8 @@
-import ACLActor.{UserNotFound, UserNotSubscribed}
+package directives
+
+import actors.ACLActor.{UserNotFound, UserNotSubscribed}
 import akka.http.scaladsl.server.{Directive1, Directives}
+import models.ApiError
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

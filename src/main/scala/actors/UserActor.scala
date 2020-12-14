@@ -1,7 +1,8 @@
-import ACLActor.RegisterUser
+package actors
+
+import actors.ACLActor.RegisterUser
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import akka.io.Tcp.Register
 
 object UserActor {
 

@@ -1,12 +1,18 @@
-import ACLActor.{GetUser, UserNotFound}
-import ChatGroupActor.GetSubscribers
+package router
+
+import actors.ACLActor.GetUser
+import actors.ChatGroupActor.GetSubscribers
+import actors.{ACLActor, ChatGroupActor, UserActor}
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import directives.{ChatApplicationDirectives, ValidatorDirectives}
 import io.circe.generic.auto._
+import models.MessageClass
+import validators.{MessageClassValidator, StringValidator}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
