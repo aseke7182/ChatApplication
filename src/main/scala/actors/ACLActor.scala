@@ -1,15 +1,15 @@
 package actors
 
 import actors.ChatGroupActor.GetSubscribers
+import actors.UserActor.Subscribe
+import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior, Scheduler}
 import akka.util.Timeout
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
-
 import scala.concurrent.duration._
-import akka.actor.typed.scaladsl.AskPattern.Askable
+import scala.util.{Failure, Success}
 
 object ACLActor {
 
@@ -18,6 +18,8 @@ object ACLActor {
   case class GetUser(userName: String, replyTo: ActorRef[Either[ActorRef[UserActor.Command], Exception]]) extends Command
 
   case class RegisterUser(userRef: ActorRef[UserActor.Command]) extends Command
+
+  case class CreateUser(userName: String) extends Command
 
   final case class UserNotFound(userName: String) extends Exception(s"User with username: ${userName} not found.")
 
@@ -59,6 +61,11 @@ object ACLActor {
           Behaviors.same
         case RegisterUser(user) =>
           working(chat, registeredUsers :+ user)
+        case CreateUser(userName) =>
+          val newUser = context.spawn(UserActor(userName = userName, chatRef = chat, aclRef = context.self), userName)
+          newUser ! Subscribe  //TODO: Delete this line
+          context.self ! RegisterUser(newUser)
+          Behaviors.same
       }
     }
 
