@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0898b843-9c09-4f9e-a7c0-9db456ee6db7",
+		"_postman_id": "1b67cc3f-ebd1-44f7-9b3f-e436a9e7649d",
 		"name": "bhle",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"1\",\n    \"userName\": \"user1\",\n    \"msg\": \"Hello, Dude!\"\n}",
+							"raw": "{\n    \"userName\": \"madi\",\n    \"msg\": \"Hello, Dude!\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -23,11 +23,13 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9000/chat-application/sendMessage",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application/sendMessage",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application",
 								"sendMessage"
@@ -54,11 +56,13 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9000/chat-application/getChatLog",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application/getChatLog",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application",
 								"getChatLog"
@@ -73,11 +77,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:9000/chat-application",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application"
 							]
@@ -91,11 +97,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:9000/chat-application/getSubscribers",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application/getSubscribers",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application",
 								"getSubscribers"
@@ -111,7 +119,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userName\":\"newUser\"\n}",
+							"raw": "{\n    \"userName\":\"madi\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -119,11 +127,13 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9000/chat-application/createUser",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application/createUser",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application",
 								"createUser"
@@ -147,11 +157,13 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9000/chat-application/subscribeUser",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application/subscribeUser",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application",
 								"subscribeUser"
@@ -175,11 +187,13 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:9000/chat-application/unsubscribeUser",
+							"raw": "https://bhle-chat-app.herokuapp.com/chat-application/unsubscribeUser",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"bhle-chat-app",
+								"herokuapp",
+								"com"
 							],
-							"port": "9000",
 							"path": [
 								"chat-application",
 								"unsubscribeUser"

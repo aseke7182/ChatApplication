@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker.ExecCmd
+
 name := "ScalaProject"
 
 version := "0.1"
@@ -24,3 +26,15 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
+
+enablePlugins(JavaAppPackaging, AshScriptPlugin)
+
+dockerBaseImage := "openjdk:8-jre-alpine"
+packageName in Docker := "chat-app-akka"
+
+dockerCommands := dockerCommands.value.map {
+  case ExecCmd("CMD", _ @ _*) =>
+    ExecCmd("CMD", "/opt/docker/bin/ChatApplicationBoot")
+  case other =>
+    other
+}

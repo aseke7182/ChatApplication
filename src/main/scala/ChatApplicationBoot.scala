@@ -19,21 +19,18 @@ object ChatApplicationBoot {
       implicit val executionContext: ExecutionContext = context.executionContext
 
       val chat = context.spawn(ChatGroupActor("group"), "Chat")
-      Thread.sleep(100)
       val accessControl = context.spawn(ACLActor(chat), "ACLActor")
-      Thread.sleep(100)
       val user1 = context.spawn(UserActor("user1", chat, accessControl), "user1")
       val user2 = context.spawn(actors.UserActor("user2", chat, accessControl), "user2")
       val user3 = context.spawn(actors.UserActor("user3", chat, accessControl), "user3")
 
 
-      val host = "localhost"
+      val host = "0.0.0.0"
       val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(9000)
 
       chat ! Subscribe(user1)
       chat ! Subscribe(user2)
       chat ! Subscribe(user3)
-      Thread.sleep(100)
       user1 ! PostMessage("Hello")
       user2 ! PostMessage("Hello mate")
       user3 ! PostMessage("Hello mateeeee")
